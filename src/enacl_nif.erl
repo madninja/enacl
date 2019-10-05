@@ -207,13 +207,9 @@
 -on_load(init/0).
 
 init() ->
-    Dir = case code:priv_dir(enacl) of
-              {error, bad_name} ->
-                  filename:join(
-                    filename:dirname(
-                      filename:dirname(
-                        code:which(?MODULE))), "priv");
-              D -> D
+    Dir = case os:getenv("NIF_PATH") of
+              false -> code:priv_dir(enacl);
+              Path -> Path
           end,
     SoName = filename:join(Dir, atom_to_list(?MODULE)),
     erlang:load_nif(SoName, 0).
